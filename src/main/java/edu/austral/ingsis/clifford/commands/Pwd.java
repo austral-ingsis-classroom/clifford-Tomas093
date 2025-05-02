@@ -1,14 +1,15 @@
 package edu.austral.ingsis.clifford.commands;
 
-import edu.austral.ingsis.clifford.tree.structure.Tree;
-import edu.austral.ingsis.clifford.tree.structure.TreeNode;
 import edu.austral.ingsis.clifford.filesystem.FileSystem;
 import edu.austral.ingsis.clifford.result.Result;
+import edu.austral.ingsis.clifford.tree.structure.Tree;
+import edu.austral.ingsis.clifford.tree.structure.TreeNode;
 
-public record Pwd<T extends FileSystem>() implements Command<T> {
+public record Pwd<T extends FileSystem>(Tree<T> tree, String argument, TreeNode<T> currentNode)
+    implements Command<T> {
 
   @Override
-  public Result<T> execute(Tree<T> tree, String argument, TreeNode<T> currentNode) {
+  public Result<T> execute() {
     String absolutePath = getAbsolutePath(tree, currentNode);
     return createResult(tree, absolutePath);
   }

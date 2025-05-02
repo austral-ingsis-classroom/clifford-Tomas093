@@ -1,15 +1,14 @@
 package edu.austral.ingsis.clifford.result;
 
-  import edu.austral.ingsis.clifford.tree.structure.Tree;
-  import edu.austral.ingsis.clifford.filesystem.FileSystem;
-  import edu.austral.ingsis.clifford.tree.structure.TreeNode;
+import edu.austral.ingsis.clifford.filesystem.FileSystem;
+import edu.austral.ingsis.clifford.tree.structure.Tree;
+import edu.austral.ingsis.clifford.tree.structure.TreeNode;
 
-  public sealed interface Result<T extends FileSystem> permits RemovalResult, CommandResult {
+public sealed interface Result<T extends FileSystem> permits RemovalResult, CommandResult {
 
-    String getMessage();
+  String getMessage();
 
-    TreeNode<T> getCurrentNode();
+  TreeNode<T> getCurrentNode();
 
-    Tree<T> getTree();
-
-  }
+  Tree<T> getTree();
+}

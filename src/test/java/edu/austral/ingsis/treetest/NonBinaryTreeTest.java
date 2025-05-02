@@ -1,19 +1,18 @@
 package edu.austral.ingsis.treetest;
 
+import static org.junit.jupiter.api.Assertions.*;
+
+import edu.austral.ingsis.clifford.filesystem.Directory;
 import edu.austral.ingsis.clifford.filesystem.File;
 import edu.austral.ingsis.clifford.filesystem.FileSystem;
-import edu.austral.ingsis.clifford.filesystem.Directory;
-import edu.austral.ingsis.clifford.tree.structure.NonBinaryTree;
 import edu.austral.ingsis.clifford.tree.structure.Node;
+import edu.austral.ingsis.clifford.tree.structure.NonBinaryTree;
 import edu.austral.ingsis.clifford.tree.structure.Tree;
 import edu.austral.ingsis.clifford.tree.structure.TreeNode;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class NonBinaryTreeTest {
 
@@ -62,7 +61,7 @@ public class NonBinaryTreeTest {
     Tree<FileSystem> treeWithCurrentNode = treeWithChild.withCurrentNode(childNode);
 
     assertNotSame(treeWithChild, treeWithCurrentNode);
-    assertEquals(childNode, ((NonBinaryTree<FileSystem>)treeWithCurrentNode).getCurrentNode());
+    assertEquals(childNode, ((NonBinaryTree<FileSystem>) treeWithCurrentNode).getCurrentNode());
     assertEquals(treeWithChild.getRoot(), treeWithCurrentNode.getRoot());
   }
 
@@ -92,12 +91,15 @@ public class NonBinaryTreeTest {
     FileSystem readme = new File("readme.txt");
 
     Tree<FileSystem> treeWithDocs = tree.withChildAddedTo(root, docs, tree.getCurrentNode());
-    Tree<FileSystem> treeWithBoth = treeWithDocs.withChildAddedTo(root, readme, ((NonBinaryTree<FileSystem>)treeWithDocs).getCurrentNode());
+    Tree<FileSystem> treeWithBoth =
+        treeWithDocs.withChildAddedTo(
+            root, readme, ((NonBinaryTree<FileSystem>) treeWithDocs).getCurrentNode());
 
     assertNotNull(treeWithBoth.findNode(docs));
     assertNotNull(treeWithBoth.findNode(readme));
 
-    List<String> childrenNames = treeWithBoth.getRoot().getChildren().stream()
+    List<String> childrenNames =
+        treeWithBoth.getRoot().getChildren().stream()
             .map(child -> child.getData().name())
             .collect(Collectors.toList());
 
@@ -114,12 +116,14 @@ public class NonBinaryTreeTest {
     Tree<FileSystem> treeWithDocs = tree.withChildAddedTo(root, docs, tree.getCurrentNode());
     TreeNode<FileSystem> docsNode = treeWithDocs.findNode(docs);
 
-    Tree<FileSystem> treeWithReports = treeWithDocs.withChildAddedTo(docs, reports,
-            ((NonBinaryTree<FileSystem>)treeWithDocs).getCurrentNode());
+    Tree<FileSystem> treeWithReports =
+        treeWithDocs.withChildAddedTo(
+            docs, reports, ((NonBinaryTree<FileSystem>) treeWithDocs).getCurrentNode());
     TreeNode<FileSystem> reportsNode = treeWithReports.findNode(reports);
 
-    Tree<FileSystem> treeWithQuarterly = treeWithReports.withChildAddedTo(reports, quarterly,
-            ((NonBinaryTree<FileSystem>)treeWithReports).getCurrentNode());
+    Tree<FileSystem> treeWithQuarterly =
+        treeWithReports.withChildAddedTo(
+            reports, quarterly, ((NonBinaryTree<FileSystem>) treeWithReports).getCurrentNode());
 
     assertNotNull(treeWithQuarterly.findNode(docs));
     assertNotNull(treeWithQuarterly.findNode(reports));
@@ -169,8 +173,9 @@ public class NonBinaryTreeTest {
     FileSystem reports = new Directory("reports");
 
     Tree<FileSystem> treeWithDocs = tree.withChildAddedTo(root, docs, tree.getCurrentNode());
-    Tree<FileSystem> treeWithReports = treeWithDocs.withChildAddedTo(docs, reports,
-            ((NonBinaryTree<FileSystem>)treeWithDocs).getCurrentNode());
+    Tree<FileSystem> treeWithReports =
+        treeWithDocs.withChildAddedTo(
+            docs, reports, ((NonBinaryTree<FileSystem>) treeWithDocs).getCurrentNode());
 
     TreeNode<FileSystem> parentNode = treeWithReports.getParentNode(reports);
 

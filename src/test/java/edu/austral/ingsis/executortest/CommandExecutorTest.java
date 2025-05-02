@@ -1,16 +1,16 @@
-package edu.austral.ingsis.executor;
+package edu.austral.ingsis.executortest;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 import edu.austral.ingsis.clifford.commands.executer.CommandExecutor;
-import edu.austral.ingsis.clifford.filesystem.FileSystem;
 import edu.austral.ingsis.clifford.filesystem.Directory;
+import edu.austral.ingsis.clifford.filesystem.FileSystem;
 import edu.austral.ingsis.clifford.result.Result;
 import edu.austral.ingsis.clifford.tree.structure.NonBinaryTree;
 import edu.austral.ingsis.clifford.tree.structure.Tree;
 import edu.austral.ingsis.clifford.tree.structure.TreeNode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class CommandExecutorTest {
 
@@ -44,7 +44,8 @@ public class CommandExecutorTest {
   @Test
   void testCdCommand() {
     // Create directory first
-    Result<FileSystem> mkdirResult = CommandExecutor.executeCommand("mkdir test", tree, currentNode);
+    Result<FileSystem> mkdirResult =
+        CommandExecutor.executeCommand("mkdir test", tree, currentNode);
     tree = mkdirResult.getTree();
     currentNode = mkdirResult.getCurrentNode();
 
@@ -84,11 +85,13 @@ public class CommandExecutorTest {
   @Test
   void testLsCommand() {
     // Create a file and directory
-    Result<FileSystem> touchResult = CommandExecutor.executeCommand("touch file1.txt", tree, currentNode);
+    Result<FileSystem> touchResult =
+        CommandExecutor.executeCommand("touch file1.txt", tree, currentNode);
     tree = touchResult.getTree();
     currentNode = touchResult.getCurrentNode();
 
-    Result<FileSystem> mkdirResult = CommandExecutor.executeCommand("mkdir dir1", tree, currentNode);
+    Result<FileSystem> mkdirResult =
+        CommandExecutor.executeCommand("mkdir dir1", tree, currentNode);
     tree = mkdirResult.getTree();
     currentNode = mkdirResult.getCurrentNode();
 
@@ -100,15 +103,18 @@ public class CommandExecutorTest {
   @Test
   void testLsWithSortOrderCommand() {
     // Create a file and directory
-    Result<FileSystem> touchResult = CommandExecutor.executeCommand("touch file1.txt", tree, currentNode);
+    Result<FileSystem> touchResult =
+        CommandExecutor.executeCommand("touch file1.txt", tree, currentNode);
     tree = touchResult.getTree();
     currentNode = touchResult.getCurrentNode();
 
-    Result<FileSystem> mkdirResult = CommandExecutor.executeCommand("mkdir dir1", tree, currentNode);
+    Result<FileSystem> mkdirResult =
+        CommandExecutor.executeCommand("mkdir dir1", tree, currentNode);
     tree = mkdirResult.getTree();
     currentNode = mkdirResult.getCurrentNode();
 
-    Result<FileSystem> lsResult = CommandExecutor.executeCommand("ls --ord=desc", tree, currentNode);
+    Result<FileSystem> lsResult =
+        CommandExecutor.executeCommand("ls --ord=desc", tree, currentNode);
 
     assertEquals("file1.txt dir1", lsResult.getMessage());
   }
@@ -116,7 +122,8 @@ public class CommandExecutorTest {
   @Test
   void testRmCommand() {
     // Create a file first
-    Result<FileSystem> touchResult = CommandExecutor.executeCommand("touch file1.txt", tree, currentNode);
+    Result<FileSystem> touchResult =
+        CommandExecutor.executeCommand("touch file1.txt", tree, currentNode);
     tree = touchResult.getTree();
     currentNode = touchResult.getCurrentNode();
 
@@ -138,7 +145,8 @@ public class CommandExecutorTest {
   @Test
   void testRmDirectoryError() {
     // Create directory first
-    Result<FileSystem> mkdirResult = CommandExecutor.executeCommand("mkdir dir1", tree, currentNode);
+    Result<FileSystem> mkdirResult =
+        CommandExecutor.executeCommand("mkdir dir1", tree, currentNode);
     tree = mkdirResult.getTree();
     currentNode = mkdirResult.getCurrentNode();
 
@@ -150,11 +158,13 @@ public class CommandExecutorTest {
   @Test
   void testRmDirectoryRecursive() {
     // Create directory first
-    Result<FileSystem> mkdirResult = CommandExecutor.executeCommand("mkdir dir1", tree, currentNode);
+    Result<FileSystem> mkdirResult =
+        CommandExecutor.executeCommand("mkdir dir1", tree, currentNode);
     tree = mkdirResult.getTree();
     currentNode = mkdirResult.getCurrentNode();
 
-    Result<FileSystem> rmResult = CommandExecutor.executeCommand("rm --recursive dir1", tree, currentNode);
+    Result<FileSystem> rmResult =
+        CommandExecutor.executeCommand("rm --recursive dir1", tree, currentNode);
 
     assertEquals("'dir1' removed", rmResult.getMessage());
 
@@ -172,13 +182,14 @@ public class CommandExecutorTest {
   @Test
   void testPwdCommand() {
     // Create and navigate to directory
-    Result<FileSystem> mkdirResult = CommandExecutor.executeCommand("mkdir dir1", tree, currentNode);
+    Result<FileSystem> mkdirResult =
+        CommandExecutor.executeCommand("mkdir dir1", tree, currentNode);
     tree = mkdirResult.getTree();
     currentNode = mkdirResult.getCurrentNode();
 
     Result<FileSystem> cdResult = CommandExecutor.executeCommand("cd dir1", tree, currentNode);
     tree = cdResult.getTree();
-    System.out.println("root="+tree.getRoot().getData().name());
+    System.out.println("root=" + tree.getRoot().getData().name());
     currentNode = cdResult.getCurrentNode();
 
     Result<FileSystem> pwdResult = CommandExecutor.executeCommand("pwd", tree, currentNode);

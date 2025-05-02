@@ -1,7 +1,6 @@
 package edu.austral.ingsis.clifford.tree.structure;
 
 import edu.austral.ingsis.clifford.filesystem.FileSystem;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -68,6 +67,4 @@ public final class Node<T extends FileSystem> implements TreeNode<T> {
   public int hashCode() {
     return Objects.hash(fileSystem, children);
   }
-
-
 }

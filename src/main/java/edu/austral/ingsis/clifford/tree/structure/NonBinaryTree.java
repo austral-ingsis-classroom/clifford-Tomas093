@@ -4,9 +4,7 @@ import edu.austral.ingsis.clifford.filesystem.FileSystem;
 import edu.austral.ingsis.clifford.tree.operator.TreeBuilder;
 import edu.austral.ingsis.clifford.tree.operator.TreeCleaner;
 import edu.austral.ingsis.clifford.tree.operator.TreeSearcher;
-
 import java.util.Objects;
-
 
 public final class NonBinaryTree<T extends FileSystem> implements Tree<T> {
   private final TreeNode<T> root;

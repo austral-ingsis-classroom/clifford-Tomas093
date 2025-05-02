@@ -1,9 +1,12 @@
 package edu.austral.ingsis.commandtest;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+
 import edu.austral.ingsis.clifford.commands.Invalid;
+import edu.austral.ingsis.clifford.filesystem.Directory;
 import edu.austral.ingsis.clifford.filesystem.File;
 import edu.austral.ingsis.clifford.filesystem.FileSystem;
-import edu.austral.ingsis.clifford.filesystem.Directory;
 import edu.austral.ingsis.clifford.result.Result;
 import edu.austral.ingsis.clifford.tree.structure.NonBinaryTree;
 import edu.austral.ingsis.clifford.tree.structure.Tree;
@@ -12,13 +15,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
-
 public class InvalidTest {
 
   private Tree<FileSystem> fileSystem;
-  private Invalid invalid;
   private TreeNode<FileSystem> docsNode;
 
   @BeforeEach
@@ -30,7 +29,6 @@ public class InvalidTest {
     FileSystem file = new File("file.txt");
 
     fileSystem = new NonBinaryTree<>(root);
-    invalid = new Invalid();
 
     // Add 'docs' to root
     fileSystem = fileSystem.withChildAddedTo(fileSystem.getRoot(), docs, fileSystem.getRoot());
@@ -50,7 +48,8 @@ public class InvalidTest {
   @Test
   @DisplayName("Test invalid command with empty argument")
   void testInvalidCommandEmptyArgument() {
-    Result<FileSystem> result = invalid.execute(fileSystem, "", fileSystem.getRoot());
+    Invalid<FileSystem> invalid = new Invalid<>(fileSystem, fileSystem.getRoot(), "");
+    Result<FileSystem> result = invalid.execute();
     assertEquals("Invalid command", result.getMessage());
     assertSame(fileSystem, result.getTree());
   }
@@ -59,7 +58,8 @@ public class InvalidTest {
   @DisplayName("Test invalid command with argument")
   void testInvalidCommandWithArgument() {
     String invalidArg = "xyz";
-    Result<FileSystem> result = invalid.execute(fileSystem, invalidArg, fileSystem.getRoot());
+    Invalid<FileSystem> invalid = new Invalid<>(fileSystem, fileSystem.getRoot(), invalidArg);
+    Result<FileSystem> result = invalid.execute();
     assertEquals("Invalid command" + invalidArg, result.getMessage());
     assertSame(fileSystem, result.getTree());
   }
@@ -68,7 +68,8 @@ public class InvalidTest {
   @DisplayName("Test invalid command with path-like argument")
   void testInvalidCommandWithPath() {
     String invalidArg = "/some/path";
-    Result<FileSystem> result = invalid.execute(fileSystem, invalidArg, fileSystem.getRoot());
+    Invalid<FileSystem> invalid = new Invalid<>(fileSystem, fileSystem.getRoot(), invalidArg);
+    Result<FileSystem> result = invalid.execute();
     assertEquals("Invalid command" + invalidArg, result.getMessage());
     assertSame(fileSystem, result.getTree());
   }
@@ -77,7 +78,8 @@ public class InvalidTest {
   @DisplayName("Test invalid command from non-root directory")
   void testInvalidCommandFromNonRootDirectory() {
     String invalidArg = "command";
-    Result<FileSystem> result = invalid.execute(fileSystem, invalidArg, docsNode);
+    Invalid<FileSystem> invalid = new Invalid<>(fileSystem, docsNode, invalidArg);
+    Result<FileSystem> result = invalid.execute();
     assertEquals("Invalid command" + invalidArg, result.getMessage());
     assertSame(fileSystem, result.getTree());
   }
@@ -86,7 +88,8 @@ public class InvalidTest {
   @DisplayName("Test invalid command with special characters")
   void testInvalidCommandWithSpecialChars() {
     String invalidArg = "--help";
-    Result<FileSystem> result = invalid.execute(fileSystem, invalidArg, fileSystem.getRoot());
+    Invalid<FileSystem> invalid = new Invalid<>(fileSystem, fileSystem.getRoot(), invalidArg);
+    Result<FileSystem> result = invalid.execute();
     assertEquals("Invalid command" + invalidArg, result.getMessage());
     assertSame(fileSystem, result.getTree());
   }

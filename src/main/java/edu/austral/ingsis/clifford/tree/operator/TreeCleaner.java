@@ -1,13 +1,11 @@
 package edu.austral.ingsis.clifford.tree.operator;
 
 import edu.austral.ingsis.clifford.filesystem.FileSystem;
-import edu.austral.ingsis.clifford.result.Result;
 import edu.austral.ingsis.clifford.result.RemovalResult;
 import edu.austral.ingsis.clifford.tree.structure.Node;
 import edu.austral.ingsis.clifford.tree.structure.NonBinaryTree;
 import edu.austral.ingsis.clifford.tree.structure.Tree;
 import edu.austral.ingsis.clifford.tree.structure.TreeNode;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -31,12 +29,14 @@ public record TreeCleaner<T extends FileSystem>(Tree<T> tree) {
       return tree;
     }
 
-    if (Objects.requireNonNull(getRoot()).getData() != null && getRoot().getData().equals(nodeData)) {
+    if (Objects.requireNonNull(getRoot()).getData() != null
+        && getRoot().getData().equals(nodeData)) {
       return tree;
     }
 
-    RemovalResult<T> result = removeNodeRecursive(getRoot(),
-            child -> child.getData() != null && child.getData().equals(nodeData));
+    RemovalResult<T> result =
+        removeNodeRecursive(
+            getRoot(), child -> child.getData() != null && child.getData().equals(nodeData));
 
     if (result.found()) {
       return new NonBinaryTree<>(result.node());
@@ -53,8 +53,7 @@ public record TreeCleaner<T extends FileSystem>(Tree<T> tree) {
       return tree;
     }
 
-    RemovalResult<T> result = removeNodeRecursive(getRoot(),
-            child -> child.equals(node));
+    RemovalResult<T> result = removeNodeRecursive(getRoot(), child -> child.equals(node));
 
     if (result.found()) {
       return new NonBinaryTree<>(result.node());
@@ -62,7 +61,8 @@ public record TreeCleaner<T extends FileSystem>(Tree<T> tree) {
     return tree;
   }
 
-  private RemovalResult<T> removeNodeRecursive(TreeNode<T> current, Predicate<TreeNode<T>> matchesNode) {
+  private RemovalResult<T> removeNodeRecursive(
+      TreeNode<T> current, Predicate<TreeNode<T>> matchesNode) {
     List<? extends TreeNode<T>> currentChildren = current.getChildren();
     List<TreeNode<T>> newChildren = new ArrayList<>();
     boolean found = false;

@@ -1,8 +1,10 @@
 package edu.austral.ingsis.commandtest;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import edu.austral.ingsis.clifford.commands.Pwd;
-import edu.austral.ingsis.clifford.filesystem.FileSystem;
 import edu.austral.ingsis.clifford.filesystem.Directory;
+import edu.austral.ingsis.clifford.filesystem.FileSystem;
 import edu.austral.ingsis.clifford.result.Result;
 import edu.austral.ingsis.clifford.tree.structure.NonBinaryTree;
 import edu.austral.ingsis.clifford.tree.structure.Tree;
@@ -11,12 +13,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class PwdTest {
 
   private Tree<FileSystem> fileSystem;
-  private Pwd pwd;
   private TreeNode<FileSystem> docsNode;
   private TreeNode<FileSystem> reportsNode;
   private TreeNode<FileSystem> deepFolderNode;
@@ -29,7 +28,6 @@ public class PwdTest {
     Directory deepDirectory = new Directory("deep");
 
     fileSystem = new NonBinaryTree<>(root);
-    pwd = new Pwd();
 
     // Add 'docs' to root
     fileSystem = fileSystem.withChildAddedTo(fileSystem.getRoot(), docs, fileSystem.getRoot());
@@ -47,28 +45,32 @@ public class PwdTest {
   @Test
   @DisplayName("Test pwd at root directory")
   void testPwdAtRootDirectory() {
-    Result<FileSystem> result = pwd.execute(fileSystem, "", fileSystem.getRoot());
+    Pwd<FileSystem> pwd = new Pwd<>(fileSystem, "", fileSystem.getRoot());
+    Result<FileSystem> result = pwd.execute();
     assertEquals("/", result.getMessage());
   }
 
   @Test
   @DisplayName("Test pwd in first-level directory")
   void testPwdInFirstLevelDirectory() {
-    Result<FileSystem> result = pwd.execute(fileSystem, "", docsNode);
+    Pwd<FileSystem> pwd = new Pwd<>(fileSystem, "", docsNode);
+    Result<FileSystem> result = pwd.execute();
     assertEquals("/docs", result.getMessage());
   }
 
   @Test
   @DisplayName("Test pwd in nested directory")
   void testPwdInNestedDirectory() {
-    Result<FileSystem> result = pwd.execute(fileSystem, "", reportsNode);
+    Pwd<FileSystem> pwd = new Pwd<>(fileSystem, "", reportsNode);
+    Result<FileSystem> result = pwd.execute();
     assertEquals("/docs/reports", result.getMessage());
   }
 
   @Test
   @DisplayName("Test pwd in deeply nested directory")
   void testPwdInDeeplyNestedDirectory() {
-    Result<FileSystem> result = pwd.execute(fileSystem, "", deepFolderNode);
+    Pwd<FileSystem> pwd = new Pwd<>(fileSystem, "", deepFolderNode);
+    Result<FileSystem> result = pwd.execute();
     assertEquals("/docs/reports/deep", result.getMessage());
   }
 
@@ -76,7 +78,8 @@ public class PwdTest {
   @DisplayName("Test pwd ignores arguments")
   void testPwdIgnoresArguments() {
     // Pwd should ignore arguments and return the same result
-    Result<FileSystem> result = pwd.execute(fileSystem, "someArgument", docsNode);
+    Pwd<FileSystem> pwd = new Pwd<>(fileSystem, "someArgument", docsNode);
+    Result<FileSystem> result = pwd.execute();
     assertEquals("/docs", result.getMessage());
   }
 }

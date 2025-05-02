@@ -26,21 +26,23 @@ public record TreeBuilder<T extends FileSystem>(TreeNode<T> root) {
       return current.withChild(childData);
     }
 
-    return traverseAndUpdateChildren(current, node ->
-            addChildToNodeRecursive(node, parentNodeData, childData));
+    return traverseAndUpdateChildren(
+        current, node -> addChildToNodeRecursive(node, parentNodeData, childData));
   }
 
-  private TreeNode<T> addChildToNodeRecursive(TreeNode<T> current, TreeNode<T> parentNode, T childData) {
+  private TreeNode<T> addChildToNodeRecursive(
+      TreeNode<T> current, TreeNode<T> parentNode, T childData) {
     if (current.equals(parentNode)) {
       return current.withChild(childData);
     }
 
-    return traverseAndUpdateChildren(current, node ->
-            addChildToNodeRecursive(node, parentNode, childData));
+    return traverseAndUpdateChildren(
+        current, node -> addChildToNodeRecursive(node, parentNode, childData));
   }
 
-  private TreeNode<T> traverseAndUpdateChildren(TreeNode<T> current,
-                                                java.util.function.Function<TreeNode<T>, TreeNode<T>> recursiveOperation) {
+  private TreeNode<T> traverseAndUpdateChildren(
+      TreeNode<T> current,
+      java.util.function.Function<TreeNode<T>, TreeNode<T>> recursiveOperation) {
     TreeNode<T> updatedCurrent = current;
     for (int i = 0; i < current.getChildren().size(); i++) {
       TreeNode<T> child = current.getChildren().get(i);

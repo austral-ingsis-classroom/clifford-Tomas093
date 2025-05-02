@@ -6,10 +6,11 @@ import edu.austral.ingsis.clifford.result.Result;
 import edu.austral.ingsis.clifford.tree.structure.Tree;
 import edu.austral.ingsis.clifford.tree.structure.TreeNode;
 
-public record Cd<T extends FileSystem>() implements Command<T> {
+public record Cd<T extends FileSystem>(Tree<T> tree, String argument, TreeNode<T> currentNode)
+    implements Command<T> {
 
   @Override
-  public Result<T> execute(Tree<T> tree, String argument, TreeNode<T> currentNode) {
+  public Result<T> execute() {
     if (isCurrentDirectory(argument)) {
       return handleCurrentDirectory(tree, currentNode);
     }
@@ -38,8 +39,9 @@ public record Cd<T extends FileSystem>() implements Command<T> {
     if (parentNode == null) {
       return createResult(tree, "moved to directory '/'");
     }
-    return createResult(tree.withCurrentNode(parentNode),
-            "moved to directory '" + parentNode.getData().name() + "'");
+    return createResult(
+        tree.withCurrentNode(parentNode),
+        "moved to directory '" + parentNode.getData().name() + "'");
   }
 
   private Result<T> handlePathNavigation(Tree<T> tree, String path, TreeNode<T> currentNode) {
@@ -53,8 +55,9 @@ public record Cd<T extends FileSystem>() implements Command<T> {
       return createResult(tree, "'" + targetNode.getData().name() + "' is not a directory");
     }
 
-    return createResult(tree.withCurrentNode(targetNode),
-            "moved to directory '" + targetNode.getData().name() + "'");
+    return createResult(
+        tree.withCurrentNode(targetNode),
+        "moved to directory '" + targetNode.getData().name() + "'");
   }
 
   private TreeNode<T> resolvePath(Tree<T> tree, String path, TreeNode<T> currentNode) {
@@ -115,6 +118,6 @@ public record Cd<T extends FileSystem>() implements Command<T> {
   }
 
   private boolean isDirectory(T fileSystem) {
-    return fileSystem.getType() == FileSystemType.DIRECTORY;
+    return fileSystem.getType() == FileSystemType.FOLDER;
   }
 }

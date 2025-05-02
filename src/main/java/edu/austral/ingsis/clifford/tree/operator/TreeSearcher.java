@@ -3,7 +3,6 @@ package edu.austral.ingsis.clifford.tree.operator;
 import edu.austral.ingsis.clifford.filesystem.FileSystem;
 import edu.austral.ingsis.clifford.tree.structure.Tree;
 import edu.austral.ingsis.clifford.tree.structure.TreeNode;
-
 import java.util.Objects;
 
 public record TreeSearcher<T extends FileSystem>(Tree<T> tree) {

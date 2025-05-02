@@ -1,9 +1,11 @@
 package edu.austral.ingsis.commandtest;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import edu.austral.ingsis.clifford.commands.Cd;
+import edu.austral.ingsis.clifford.filesystem.Directory;
 import edu.austral.ingsis.clifford.filesystem.File;
 import edu.austral.ingsis.clifford.filesystem.FileSystem;
-import edu.austral.ingsis.clifford.filesystem.Directory;
 import edu.austral.ingsis.clifford.result.Result;
 import edu.austral.ingsis.clifford.tree.structure.NonBinaryTree;
 import edu.austral.ingsis.clifford.tree.structure.Tree;
@@ -12,14 +14,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 public class CdTest {
 
   private Tree<FileSystem> fileSystem;
-  private Cd cd;
   private TreeNode<FileSystem> docsNode;
-
 
   @BeforeEach
   void setUp() {
@@ -30,12 +28,11 @@ public class CdTest {
     FileSystem file = new File("file.txt");
 
     fileSystem = new NonBinaryTree<>(root);
-    cd = new Cd();
 
     // Agregamos 'docs' al root
     fileSystem = fileSystem.withChildAddedTo(fileSystem.getRoot(), docs, fileSystem.getRoot());
     TreeNode<FileSystem> docsNodeLocal = fileSystem.findNode(docs);
-    docsNode = docsNodeLocal;  // actualizar la variable global para los tests
+    docsNode = docsNodeLocal; // actualizar la variable global para los tests
 
     // Agregamos 'reports' como hijo de 'docs'
     fileSystem = fileSystem.withChildAddedTo(docsNodeLocal, reports, docsNodeLocal);
@@ -49,86 +46,103 @@ public class CdTest {
 
   @Test
   void testEmptyArgument() {
-    Result<FileSystem> result = cd.execute(fileSystem, "", fileSystem.getRoot());
+    Cd<FileSystem> cd = new Cd<>(fileSystem, "", fileSystem.getRoot());
+    Result<FileSystem> result = cd.execute();
     assertEquals("", result.getMessage());
   }
 
   @Test
   @DisplayName("Test cd with current directory (.)")
   void testCurrentDirectory() {
-    Result<FileSystem> result = cd.execute(fileSystem, ".", fileSystem.getRoot());
+    Cd<FileSystem> cd = new Cd<>(fileSystem, ".", fileSystem.getRoot());
+    Result<FileSystem> result = cd.execute();
     assertEquals("", result.getMessage());
   }
 
   @Test
   @DisplayName("Test cd with parent directory (..)")
   void testParentDirectory() {
-    Result<FileSystem> result = cd.execute(fileSystem, "..", docsNode);
+    Cd<FileSystem> cd = new Cd<>(fileSystem, "..", docsNode);
+    Result<FileSystem> result = cd.execute();
     assertEquals("moved to directory 'root'", result.getMessage());
-    assertEquals(fileSystem.getRoot(), result.getCurrentNode());
+    assertEquals(fileSystem.getRoot(), result.getTree().getCurrentNode());
   }
 
   @Test
   @DisplayName("Test cd from root to parent (..) stays at root")
   void testParentFromRoot() {
-    Result<FileSystem> result = cd.execute(fileSystem, "..", fileSystem.getRoot());
+    Cd<FileSystem> cd = new Cd<>(fileSystem, "..", fileSystem.getRoot());
+    Result<FileSystem> result = cd.execute();
     assertEquals("moved to directory '/'", result.getMessage());
-    assertEquals(fileSystem.getRoot().getData(), result.getCurrentNode().getData());
+    assertEquals(fileSystem.getRoot().getData(), result.getTree().getCurrentNode().getData());
   }
 
   @Test
   @DisplayName("Test cd with non-existent directory")
   void testNonExistentDirectory() {
-    Result<FileSystem> result = cd.execute(fileSystem, "nonexistent", fileSystem.getRoot());
+    Cd<FileSystem> cd = new Cd<>(fileSystem, "nonexistent", fileSystem.getRoot());
+    Result<FileSystem> result = cd.execute();
     assertEquals("'nonexistent' directory does not exist", result.getMessage());
-    assertEquals(fileSystem.getRoot().getData(), result.getCurrentNode().getData());
+    assertEquals(fileSystem.getRoot().getData(), result.getTree().getCurrentNode().getData());
   }
 
   @Test
   @DisplayName("Test cd to a valid directory")
   void testValidDirectory() {
-    Result<FileSystem> result = cd.execute(fileSystem, "docs", fileSystem.getRoot());
+    Cd<FileSystem> cd = new Cd<>(fileSystem, "docs", fileSystem.getRoot());
+    Result<FileSystem> result = cd.execute();
     assertEquals("moved to directory 'docs'", result.getMessage());
-    assertEquals(docsNode.getData(), result.getCurrentNode().getData());
+    assertEquals(docsNode.getData(), result.getTree().getCurrentNode().getData());
   }
 
   @Test
   @DisplayName("Test cd to a file")
   void testNavigateToFile() {
-    Result<FileSystem> result = cd.execute(fileSystem, "file.txt", fileSystem.getRoot());
+    Cd<FileSystem> cd = new Cd<>(fileSystem, "file.txt", fileSystem.getRoot());
+    Result<FileSystem> result = cd.execute();
     assertEquals("'file.txt' is not a directory", result.getMessage());
-    assertEquals(fileSystem.getRoot().getData(), result.getCurrentNode().getData());
+    assertEquals(fileSystem.getRoot().getData(), result.getTree().getCurrentNode().getData());
   }
 
   @Test
   @DisplayName("Test cd with nested path")
   void testNestedPath() {
-    Result<FileSystem> result = cd.execute(fileSystem, "docs/reports", fileSystem.getRoot());
+    Cd<FileSystem> cd = new Cd<>(fileSystem, "docs/reports", fileSystem.getRoot());
+    Result<FileSystem> result = cd.execute();
     assertEquals("moved to directory 'reports'", result.getMessage());
-    assertEquals(fileSystem.findNode(new Directory("reports")), result.getCurrentNode());
+    assertEquals(
+        fileSystem.findNode(new Directory("reports")).getData(),
+        result.getTree().getCurrentNode().getData());
   }
 
   @Test
   @DisplayName("Test cd with absolute path")
   void testAbsolutePath() {
-    Result<FileSystem> result = cd.execute(fileSystem, "/docs/reports", docsNode);
+    Cd<FileSystem> cd = new Cd<>(fileSystem, "/docs/reports", docsNode);
+    Result<FileSystem> result = cd.execute();
     assertEquals("moved to directory 'reports'", result.getMessage());
-    assertEquals(fileSystem.findNode(new Directory("reports")), result.getCurrentNode());
+    assertEquals(
+        fileSystem.findNode(new Directory("reports")).getData(),
+        result.getTree().getCurrentNode().getData());
   }
 
   @Test
   @DisplayName("Test cd to root with absolute path")
   void testToRootPath() {
-    Result<FileSystem> result = cd.execute(fileSystem, "/", docsNode);
+    Cd<FileSystem> cd = new Cd<>(fileSystem, "/", docsNode);
+    Result<FileSystem> result = cd.execute();
     assertEquals("moved to directory 'root'", result.getMessage());
-    assertEquals(fileSystem.getRoot(), result.getCurrentNode());
+    assertEquals(fileSystem.getRoot().getData(), result.getTree().getCurrentNode().getData());
   }
 
   @Test
   @DisplayName("Test cd with complex path (../pictures)")
   void testComplexPath() {
-    Result<FileSystem> result = cd.execute(fileSystem, "../pictures", docsNode);
+    Cd<FileSystem> cd = new Cd<>(fileSystem, "../pictures", docsNode);
+    Result<FileSystem> result = cd.execute();
     assertEquals("moved to directory 'pictures'", result.getMessage());
-    assertEquals(fileSystem.findNode(new Directory("pictures")), result.getCurrentNode());
+    assertEquals(
+        fileSystem.findNode(new Directory("pictures")).getData(),
+        result.getTree().getCurrentNode().getData());
   }
 }
